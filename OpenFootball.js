@@ -6,13 +6,14 @@ var jornadaSelecionada;
 var equipaSelecionada;
 var resultado;
 
+// Requisição para obter os clubes
 fetch('https://raw.githubusercontent.com/openfootball/football.json/master/2017-18/en.1.clubs.json')
   .then(response => response.json())
   .then(data => {
     // Ordenar os clubes em ordem alfabética
     data.clubs.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Mostrar todos os clubs num "option"
+    // Mostrar todos os clubes em opções no primeiro select
     data.clubs.forEach(club => {
       const option = document.createElement('option');
       option.textContent = club.name;
@@ -23,54 +24,48 @@ fetch('https://raw.githubusercontent.com/openfootball/football.json/master/2017-
     console.error(error);
   });
 
-
-
-
 const select2 = document.querySelector('#select2');
+// Requisição para obter as jornadas
 fetch('https://raw.githubusercontent.com/openfootball/football.json/master/2015-16/en.1.json')
   .then(response => response.json())
   .then(data => {
-    // Mostrar todos as jornadas num "option"
+    // Mostrar todas as jornadas em opções no segundo select
     data.rounds.forEach(rounds => {
       const option2 = document.createElement('option');
       option2.textContent = rounds.name;
       select2.appendChild(option2);
     });
 
-    // Guardo o array rounds na variável global jornadas
+    // Armazenar o array de jornadas na variável global 'jornadas'
     jornadas = data.rounds;
-    
-
   })
   .catch(error => {
     console.error(error);
   });
 
-  select.addEventListener('change', mostrarEquipa );
+// Evento de alteração (change) no primeiro select (seleção da equipe)
+select.addEventListener('change', mostrarEquipa);
 
-  function mostrarEquipa() {
-    console.log( "Equipa seleccionada", this.value );
+function mostrarEquipa() {
+  console.log("Equipa seleccionada", this.value);
+  equipaSelecionada = this.value;
+}
 
-    equipaSelecionada = this.value;
-  }
+// Evento de alteração (change) no segundo select (seleção da jornada)
+select2.addEventListener('change', mostrarJornada);
 
-  select2.addEventListener('change', mostrarJornada );
+function mostrarJornada() {
+  console.log("Jornada seleccionada", this.value);
+  jornadaSelecionada = this.value;
+}
 
-  function mostrarJornada() {
-    console.log( "Jornada seleccionada", this.value );
-    
-    jornadaSelecionada = this.value;
-    
-  }
-
-  
-  
-  const gerar = document.querySelector('button');
+const gerar = document.querySelector('button');
 gerar.addEventListener('click', mostrarOPedido);
 
-
 function mostrarOPedido() {
+  // Encontrar a jornada selecionada
   const jornada = jornadas.find(j => j.name === jornadaSelecionada);
+  // Encontrar o jogo correspondente à equipe selecionada
   const jogo = jornada.matches.find(m => m.team1 === equipaSelecionada || m.team2 === equipaSelecionada);
 
   if (!jogo) {
@@ -87,19 +82,20 @@ function mostrarOPedido() {
     const jogoDate = new Date(jogo.date);
     const dataFormatted = jogoDate.toLocaleDateString("pt-PT");
     newH2Element.textContent = `${equipaSelecionada} ${resultado} ${nomeAdversario}`;
-      
-      const container = document.querySelector('#texto');
+
+    const container = document.querySelector('#texto');
     container.appendChild(newH2Element);
 
     const dataJogo = document.createElement('h2');
+    dataJogo.id = 'data-jogo'; // Adicionando o ID 'data-jogo' ao elemento <h2>
     dataJogo.textContent = `${dataFormatted}`;
     container.appendChild(dataJogo);
-  } else {
-    h2Element.textContent = `${equipaSelecionada} ${resultado} ${nomeAdversario}`;
-    
-  }
-  
+    } else {
+      h2Element.textContent = `${equipaSelecionada} ${resultado} ${nomeAdversario}`;
+      const dataJogo = document.querySelector('#data-jogo'); // Selecionando o elemento <h2> com o ID 'data-jogo'
+      const jogoDate = new Date(jogo.date);
+      const dataFormatted = jogoDate.toLocaleDateString("pt-PT");
+      dataJogo.textContent = `${dataFormatted}`; // Atualizando o texto do elemento <h2> com a data do jogo
+    }
 }
 
-
-  

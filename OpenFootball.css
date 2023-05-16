@@ -44,3 +44,18 @@ h2 {
   background-color: #eee;
   border-radius: 5px;
 }
+
+#texto {
+  margin-top: 40px;
+}
+
+#data-jogo {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 5px;
+  background-color: #f2f2f2;
+  border-radius: 3px;
+}
